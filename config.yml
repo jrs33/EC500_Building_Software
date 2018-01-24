@@ -1,0 +1,4 @@
+logging:
+  level: INFO
+  loggers:
+    com.ec500: DEBUG
