@@ -1,5 +1,6 @@
 package com.ec500;
 
+import com.ec500.resources.TwitterResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -23,7 +24,11 @@ public class EC500_Building_SoftwareApplication extends Application<EC500_Buildi
     @Override
     public void run(final EC500_Building_SoftwareConfiguration configuration,
                     final Environment environment) {
-        // TODO: implement application
+
+        environment.jersey().register(
+                new TwitterResource()
+        );
+
     }
 
 }
