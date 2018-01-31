@@ -1,10 +1,10 @@
-# EC500_Building_Software
+# videoMaker
 
-How to start the EC500_Building_Software application
+How to start the videoMaker application
 ---
 
 1. Run `mvn clean install` to build your application
-1. Start application with `java -jar target/vidTag-1.0-SNAPSHOT.jar server config.yml`
+1. Start application with `java -jar target/videoMaker-1.0-SNAPSHOT.jar server config.yml`
 1. To check that your application is running enter url `http://localhost:8080`
 
 Health Check

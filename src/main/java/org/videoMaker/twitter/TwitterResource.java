@@ -1,6 +1,5 @@
-package com.ec500.resources;
+package org.videoMaker.twitter;
 
-import com.ec500.twitter.CollectTweets;
 import com.google.inject.Inject;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -14,10 +13,10 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class TwitterResource {
 
-    private final CollectTweets collectTweets;
+    private final TwitterIF collectTweets;
 
     @Inject
-    public TwitterResource(CollectTweets collectTweets) {
+    public TwitterResource(TwitterIF collectTweets) {
         this.collectTweets = collectTweets;
     }
 

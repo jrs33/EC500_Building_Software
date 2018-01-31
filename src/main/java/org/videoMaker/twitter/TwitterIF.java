@@ -1,4 +1,4 @@
-package com.ec500.twitter;
+package org.videoMaker.twitter;
 
 import com.google.inject.ImplementedBy;
 import com.google.inject.Inject;
@@ -7,12 +7,12 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import java.util.List;
 
-@ImplementedBy(CollectTweets.Impl.class)
-public interface CollectTweets {
+@ImplementedBy(TwitterIF.Impl.class)
+public interface TwitterIF {
 
     ResponseList<Status> getTweets();
 
-    class Impl implements CollectTweets {
+    class Impl implements TwitterIF {
 
         private final ResponseList<Status> timelineTweets;
         private final List<String> images;
