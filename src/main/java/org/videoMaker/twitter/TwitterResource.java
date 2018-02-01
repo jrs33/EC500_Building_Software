@@ -19,10 +19,10 @@ public class TwitterResource {
     public List<String> getTweets() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("ihNH0CeGDm1rxhouZmX0p0c92")
-                .setOAuthConsumerSecret("5KG6d44elMKVo5qMJlh9G9Vt71e1miqjrqDr78eoisAqWy8sUl")
-                .setOAuthAccessToken("951789582-Tv3Rj5GfnH9v2ganaMYRFJn8tmzDcmrTBj5NZB63")
-                .setOAuthAccessTokenSecret("NJvIItM8ZrKgcluyKVczNzPt0hUVnHcQOFtHqLgynBkZA");
+                .setOAuthConsumerKey("")
+                .setOAuthConsumerSecret("")
+                .setOAuthAccessToken("")
+                .setOAuthAccessTokenSecret("");
 
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
