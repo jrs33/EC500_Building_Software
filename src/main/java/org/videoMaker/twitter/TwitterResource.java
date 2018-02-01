@@ -8,25 +8,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Path("/twitter")
 public class TwitterResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ResponseList<Status> getTweets() {
-
-        // Creates a twitter4j configuration
+    public List<MediaEntity[]> getTweets() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("")
-                .setOAuthConsumerSecret("")
-                .setOAuthAccessToken("")
-                .setOAuthAccessTokenSecret("");
+                .setOAuthConsumerKey("ihNH0CeGDm1rxhouZmX0p0c92")
+                .setOAuthConsumerSecret("5KG6d44elMKVo5qMJlh9G9Vt71e1miqjrqDr78eoisAqWy8sUl")
+                .setOAuthAccessToken("951789582-Tv3Rj5GfnH9v2ganaMYRFJn8tmzDcmrTBj5NZB63")
+                .setOAuthAccessTokenSecret("NJvIItM8ZrKgcluyKVczNzPt0hUVnHcQOFtHqLgynBkZA");
 
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
 
-        // Gathering 20 responses
         ResponseList<Status> responseList;
         try {
             responseList = twitter.getHomeTimeline();
@@ -35,8 +35,19 @@ public class TwitterResource {
             return null;
         }
 
-        return responseList;
+        List<MediaEntity[]> imageList = getImagesFromTweets(responseList);
+        
+        return imageList;
+    }
 
+    public List<MediaEntity[]> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
+        List<MediaEntity[]> imageUris = new ArrayList<>();
+
+        for(Status tweet : tweetJSONObject) {
+            imageUris.add(tweet.getMediaEntities());
+        }
+
+        return imageUris;
     }
 
 }
