@@ -36,7 +36,7 @@ public class TwitterResource {
         }
 
         List<MediaEntity[]> imageList = getImagesFromTweets(responseList);
-        
+
         return imageList;
     }
 
@@ -44,7 +44,11 @@ public class TwitterResource {
         List<MediaEntity[]> imageUris = new ArrayList<>();
 
         for(Status tweet : tweetJSONObject) {
-            imageUris.add(tweet.getMediaEntities());
+            MediaEntity[] images = tweet.getMediaEntities();
+
+            if(images.length != 0) {
+                imageUris.add(images);
+            }
         }
 
         return imageUris;
