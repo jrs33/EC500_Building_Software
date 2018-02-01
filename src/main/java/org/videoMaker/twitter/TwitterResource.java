@@ -1,30 +1,41 @@
 package org.videoMaker.twitter;
 
-import com.google.inject.Inject;
-import twitter4j.ResponseList;
-import twitter4j.Status;
+import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/getTweets")
-@Produces(MediaType.APPLICATION_JSON)
+@Path("/twitter")
 public class TwitterResource {
 
-    private final TwitterIF collectTweets;
-
-    @Inject
-    public TwitterResource(TwitterIF collectTweets) {
-        this.collectTweets = collectTweets;
-    }
-
     @GET
-    @Path("/getTweets")
-    ResponseList<Status> retrieveTweets() {
+    @Produces(MediaType.APPLICATION_JSON)
+    public ResponseList<Status> getTweets() {
 
-        return collectTweets.getTweets();
+        // Creates a twitter4j configuration
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setDebugEnabled(true)
+                .setOAuthConsumerKey("")
+                .setOAuthConsumerSecret("")
+                .setOAuthAccessToken("")
+                .setOAuthAccessTokenSecret("");
+
+        TwitterFactory tf = new TwitterFactory(cb.build());
+        Twitter twitter = tf.getInstance();
+
+        // Gathering 20 responses
+        ResponseList<Status> responseList;
+        try {
+            responseList = twitter.getHomeTimeline();
+        }
+        catch (TwitterException te) {
+            return null;
+        }
+
+        return responseList;
 
     }
 
