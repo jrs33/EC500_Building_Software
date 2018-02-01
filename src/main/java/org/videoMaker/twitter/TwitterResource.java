@@ -16,7 +16,7 @@ public class TwitterResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<MediaEntity[]> getTweets() {
+    public List<String> getTweets() {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey("ihNH0CeGDm1rxhouZmX0p0c92")
@@ -35,19 +35,21 @@ public class TwitterResource {
             return null;
         }
 
-        List<MediaEntity[]> imageList = getImagesFromTweets(responseList);
+        List<String> imageList = getImagesFromTweets(responseList);
 
         return imageList;
     }
 
-    public List<MediaEntity[]> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
-        List<MediaEntity[]> imageUris = new ArrayList<>();
+    public List<String> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
+        List<String> imageUris = new ArrayList<>();
 
         for(Status tweet : tweetJSONObject) {
             MediaEntity[] images = tweet.getMediaEntities();
 
-            if(images.length != 0) {
-                imageUris.add(images);
+            for(MediaEntity mediaEntity : images) {
+                if(!mediaEntity.getMediaURL().equals("")) {
+                    imageUris.add(mediaEntity.getMediaURL());
+                }
             }
         }
 
