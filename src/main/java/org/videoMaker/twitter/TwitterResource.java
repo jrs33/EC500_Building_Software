@@ -16,13 +16,16 @@ public class TwitterResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getTweets() {
+    public List<String> getTweets(String consumerKey,
+                                  String consumerKeySecret,
+                                  String accessToken,
+                                  String accessTokenSecret) {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("")
-                .setOAuthConsumerSecret("")
-                .setOAuthAccessToken("")
-                .setOAuthAccessTokenSecret("");
+                .setOAuthConsumerKey(consumerKey)
+                .setOAuthConsumerSecret(consumerKeySecret)
+                .setOAuthAccessToken(accessToken)
+                .setOAuthAccessTokenSecret(accessTokenSecret);
 
         TwitterFactory tf = new TwitterFactory(cb.build());
         Twitter twitter = tf.getInstance();
