@@ -1,7 +1,9 @@
 package org.videoMaker.google;
 
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import org.videoMaker.twitter.ImageAddresses;
 
 import javax.imageio.*;
 import javax.ws.rs.Consumes;
@@ -12,6 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,85 +25,39 @@ public class GoogleCVResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<List<AnnotateImageResponse>> tagImages(List<String> imageAddresses) {
-
+    public List<List<AnnotateImageResponse>> tagImages(ImageAddresses imageAddresses) {
         List<List<AnnotateImageResponse>> annotateImageResponses = new ArrayList<>();
 
-        // Instantiates a client to talk to the Google CV REST API
-        try(ImageAnnotatorClient cv = ImageAnnotatorClient.create()) {
+        for(String url : imageAddresses.getUrlList()) {
+            List<AnnotateImageRequest> requests = new ArrayList<>();
 
-            for(String url : imageAddresses) {
+            ImageSource imageSource = ImageSource.newBuilder().setImageUri(url).build();
+            Image image = Image.newBuilder().setSource(imageSource).build();
+            Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
 
-                try {
-                    List<AnnotateImageResponse> imageResponse;
+            AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
+            requests.add(request);
 
-                    byte[] imageByteArray = createByteArrayFromImageURL(url);
-                    ByteString imageInMemory = readImageDataIntoMemory(imageByteArray);
+            try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+                BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+                List<AnnotateImageResponse> responses = response.getResponsesList();
 
-                    List<AnnotateImageRequest> annotateImageRequests = new ArrayList<>();
-                    annotateImageRequests.add(
-                            buildAnnotateImageRequest(imageInMemory)
-                    );
-
-                    imageResponse = getLabelDetectionResponse(
-                            annotateImageRequests,
-                            cv);
-
-                    annotateImageResponses.add(imageResponse);
+                for(AnnotateImageResponse res : responses) {
+                    if(res.hasError()) {
+                        System.out.println(res);
+                        System.out.println("Response has an error");
+                    }
                 }
-                catch (Exception e) {
-                    // TODO: Enter something here
-                }
-
+                System.out.println(response);
+                annotateImageResponses.add(responses);
+            } catch (Exception e) {
+                System.out.println("Unable to generate a client");
             }
         }
-        catch (Exception e) {
-            // TODO: Enter something here
-        }
-        return annotateImageResponses;
-    }
+        AnnotatedImages annotatedImages = new AnnotatedImages();
+        annotatedImages.setAnnotatedImageResponses(annotateImageResponses);
 
-    public byte[] createByteArrayFromImageURL(String url) throws Exception {
-        URL address = new URL(url);
-        BufferedImage image = ImageIO.read(address);
-        ByteArrayOutputStream imageByteBuffer = new ByteArrayOutputStream();
-
-        ImageIO.write(image, "jpg", imageByteBuffer);
-        imageByteBuffer.flush();
-        byte[] imageByteArray = imageByteBuffer.toByteArray();
-        imageByteBuffer.close();
-
-        return imageByteArray;
-    }
-
-    public ByteString readImageDataIntoMemory(byte[] imageByteArray) {
-        ByteString memoryImage = ByteString.copyFrom(imageByteArray);
-
-        return memoryImage;
-    }
-
-    public AnnotateImageRequest buildAnnotateImageRequest(ByteString imageBytes) {
-        Image image = Image.newBuilder()
-                .setContent(imageBytes)
-                .build();
-        Feature feature = Feature.newBuilder()
-                .setType(Feature.Type.LABEL_DETECTION)
-                .build();
-
-        AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
-                .addFeatures(feature)
-                .setImage(image)
-                .build();
-
-        return request;
-    }
-
-    public List<AnnotateImageResponse> getLabelDetectionResponse(List<AnnotateImageRequest> annotateImageRequests,
-                                                                 ImageAnnotatorClient imageAnnotatorClient) {
-        BatchAnnotateImagesResponse response = imageAnnotatorClient.batchAnnotateImages(annotateImageRequests);
-        List<AnnotateImageResponse> responses = response.getResponsesList();
-
-        return responses;
+        return annotatedImages.getAnnotatedImageResponses();
     }
 
 }
