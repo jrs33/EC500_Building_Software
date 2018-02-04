@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import org.videoMaker.google.GoogleCVResource;
 import org.videoMaker.twitter.TwitterResource;
 
 public class videoMakerApplication extends Application<videoMakerConfiguration> {
@@ -28,6 +29,9 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
 
         environment.jersey().register(
                 new TwitterResource()
+        );
+        environment.jersey().register(
+                new GoogleCVResource()
         );
 
     }

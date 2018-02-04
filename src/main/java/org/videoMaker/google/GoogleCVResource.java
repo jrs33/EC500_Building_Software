@@ -20,8 +20,8 @@ import java.util.List;
 public class GoogleCVResource {
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public List<List<AnnotateImageResponse>> tagImages(List<String> imageAddresses) {
 
         List<List<AnnotateImageResponse>> annotateImageResponses = new ArrayList<>();

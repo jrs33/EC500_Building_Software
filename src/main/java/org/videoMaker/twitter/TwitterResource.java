@@ -4,6 +4,7 @@ import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -15,11 +16,12 @@ import java.util.List;
 public class TwitterResource {
 
     @GET
+    @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<String> getTweets(String consumerKey,
-                                  String consumerKeySecret,
-                                  String accessToken,
-                                  String accessTokenSecret) {
+    public ImageAddresses getTweets(@PathParam("consumerKey") String consumerKey,
+                                  @PathParam("consumerKeySecret") String consumerKeySecret,
+                                  @PathParam("accessToken") String accessToken,
+                                  @PathParam("accessTokenSecret") String accessTokenSecret) {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(consumerKey)
@@ -40,7 +42,10 @@ public class TwitterResource {
 
         List<String> imageList = getImagesFromTweets(responseList);
 
-        return imageList;
+        ImageAddresses imageAddresses = new ImageAddresses();
+        imageAddresses.setUrlList(imageList);
+
+        return imageAddresses;
     }
 
     public List<String> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
