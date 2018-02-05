@@ -1,5 +1,7 @@
 package org.videoMaker.google;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
@@ -25,39 +27,45 @@ public class GoogleCVResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<List<AnnotateImageResponse>> tagImages(ImageAddresses imageAddresses) {
-        List<List<AnnotateImageResponse>> annotateImageResponses = new ArrayList<>();
+    public AnnotatedImages tagImages(ImageAddresses imageAddresses) {
+        List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        for(String url : imageAddresses.getUrlList()) {
-            List<AnnotateImageRequest> requests = new ArrayList<>();
+        // TODO: Change hard coded index to accept function input
+        ImageSource imageSource = ImageSource.newBuilder().setImageUri(imageAddresses.getUrlList().get(0)).build();
+        Image image = Image.newBuilder().setSource(imageSource).build();
+        Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
 
-            ImageSource imageSource = ImageSource.newBuilder().setImageUri(url).build();
-            Image image = Image.newBuilder().setSource(imageSource).build();
-            Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
+        AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
+        requests.add(request);
 
-            AnnotateImageRequest request = AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
-            requests.add(request);
+        List<AnnotateImageResponse> responses = new ArrayList<>();
+        List<String> imageDescriptions = new ArrayList<>();
+        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
+            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
+            responses = response.getResponsesList();
+            System.out.println("responses: " + responses);
 
-            try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
-                BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-                List<AnnotateImageResponse> responses = response.getResponsesList();
-
-                for(AnnotateImageResponse res : responses) {
-                    if(res.hasError()) {
-                        System.out.println(res);
-                        System.out.println("Response has an error");
-                    }
+            for(AnnotateImageResponse res : responses) {
+                if(res.hasError()) {
+                    System.out.println("Response has an error");
                 }
-                System.out.println(response);
-                annotateImageResponses.add(responses);
-            } catch (Exception e) {
-                System.out.println("Unable to generate a client");
+                System.out.println("Entity annotations: " + res.getLabelAnnotationsList());
+                for(EntityAnnotation entityAnnotation : res.getLabelAnnotationsList()) {
+                    imageDescriptions.add(entityAnnotation.getDescription());
+                }
             }
-        }
-        AnnotatedImages annotatedImages = new AnnotatedImages();
-        annotatedImages.setAnnotatedImageResponses(annotateImageResponses);
 
-        return annotatedImages.getAnnotatedImageResponses();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println(imageDescriptions);
+
+        AnnotatedImages annotatedImages = new AnnotatedImages();
+        annotatedImages.setAnnotationDescriptions(imageDescriptions);
+
+        return annotatedImages;
+
     }
 
 }
