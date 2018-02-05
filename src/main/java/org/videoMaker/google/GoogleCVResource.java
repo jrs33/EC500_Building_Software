@@ -16,6 +16,9 @@ import java.util.List;
 @Path("/google")
 public class GoogleCVResource {
 
+    /*
+        Need to pass the API key for your service in the header of the request
+     */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
