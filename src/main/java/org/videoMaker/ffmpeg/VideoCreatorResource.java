@@ -17,37 +17,35 @@ public class VideoCreatorResource {
 
     @Path("/saveImages")
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String fileSaver(@QueryParam("outputPath") String imageOutputPath,
-                               ImageAddresses imageAddresses) {
+    public void fileSaver(@QueryParam("outputPath") String imageOutputPath,
+                            @DefaultValue("jpg") @QueryParam("fileExtension") String fileExtension,
+                            ImageAddresses imageAddresses) {
         saveImagesToLocalFile(
                 imageAddresses.getUrlList(),
+                fileExtension,
                 imageOutputPath
         );
-
-        return "Files saved to " + imageOutputPath + "!";
     }
 
     @Path("/makeVideo")
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String videoCreator(@QueryParam("imagePath") String imagePath,
+    public void videoCreator(@QueryParam("imagePath") String imagePath,
                                @QueryParam("videoPath") String videoPath,
-                               @QueryParam("ffmpegPath") String ffmpegPath) {
-        createAndSaveFFMPEGVideo(imagePath, videoPath, ffmpegPath);
-
-        return "Video saved!";
+                               @DefaultValue("jpg") @QueryParam("fileExtension") String fileExtension) {
+        createAndSaveFFMPEGVideo(imagePath, videoPath, fileExtension);
     }
 
     public void saveImagesToLocalFile(List<String> imageAddresses,
+                                      String fileExtension,
                                       String imageOutputPath) {
         Image image = null;
         Integer integerConcatenate = 0; // used to uniquely identify each saved image
         for (String url : imageAddresses) {
             try (InputStream in = new URL(url).openStream()) {
-                Files.copy(in, Paths.get(imageOutputPath + "image" + integerConcatenate.toString() + ".jpg"));
+                String pathString = imageOutputPath + "image" + integerConcatenate.toString() + "." +fileExtension;
+                Files.copy(in, Paths.get(pathString));
                 integerConcatenate = integerConcatenate + 1;
             } catch (Exception e) {
                 System.out.println("Issue with request");
@@ -57,9 +55,12 @@ public class VideoCreatorResource {
 
     public void createAndSaveFFMPEGVideo(String imagePath,
                                          String videoPath,
-                                         String ffmpegPath) {
+                                         String fileExtension) {
         try {
-            Runtime.getRuntime().exec("ffmpeg -r 1 -i image%d.png -s 320x240 -aspect 4:3 output.mp4");
+            String ffmpegCommand =
+                    "ffmpeg -r 1 -i " + imagePath + "image%d." + fileExtension + " -s 320x240 -aspect 4:3 "+ videoPath +"output.mp4";
+            System.out.println(ffmpegCommand);
+            Runtime.getRuntime().exec(ffmpegCommand);
         } catch (Exception e) {
             System.out.println("One of the paths was incorrect or ffmpeg cant generate video from listed images");
         }

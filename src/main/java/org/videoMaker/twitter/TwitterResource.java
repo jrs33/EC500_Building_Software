@@ -19,9 +19,9 @@ public class TwitterResource {
     @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
     public ImageAddresses getTweets(@PathParam("consumerKey") String consumerKey,
-                                  @PathParam("consumerKeySecret") String consumerKeySecret,
-                                  @PathParam("accessToken") String accessToken,
-                                  @PathParam("accessTokenSecret") String accessTokenSecret) {
+                                    @PathParam("consumerKeySecret") String consumerKeySecret,
+                                    @PathParam("accessToken") String accessToken,
+                                    @PathParam("accessTokenSecret") String accessTokenSecret) {
         ConfigurationBuilder cb =
                 buildConfigurationObject(
                         consumerKey,
