@@ -22,6 +22,26 @@ public class TwitterResource {
                                   @PathParam("consumerKeySecret") String consumerKeySecret,
                                   @PathParam("accessToken") String accessToken,
                                   @PathParam("accessTokenSecret") String accessTokenSecret) {
+        ConfigurationBuilder cb =
+                buildConfigurationObject(
+                        consumerKey,
+                        consumerKeySecret,
+                        accessToken,
+                        accessTokenSecret
+                );
+        Twitter twitter = buildTwitterAPIClient(cb);
+        ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
+        List<String> imageList = getImagesFromTweets(responseList);
+
+        ImageAddresses imageAddresses = createImageAddressJSON(imageList);
+
+        return imageAddresses;
+    }
+
+    public ConfigurationBuilder buildConfigurationObject(String consumerKey,
+                                                         String consumerKeySecret,
+                                                         String accessToken,
+                                                         String accessTokenSecret) {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(consumerKey)
@@ -29,23 +49,26 @@ public class TwitterResource {
                 .setOAuthAccessToken(accessToken)
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
-        TwitterFactory tf = new TwitterFactory(cb.build());
-        Twitter twitter = tf.getInstance();
+        return cb;
+    }
 
+    public Twitter buildTwitterAPIClient(ConfigurationBuilder configurationBuilder) {
+        TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
+        Twitter twitter = twitterFactory.getInstance();
+
+        return twitter;
+    }
+
+    public ResponseList<Status> retrieveTimelineTweets(Twitter twitterClient) {
         ResponseList<Status> responseList;
         try {
-            responseList = twitter.getHomeTimeline();
+            responseList = twitterClient.getHomeTimeline();
         }
         catch (TwitterException te) {
             return null;
         }
 
-        List<String> imageList = getImagesFromTweets(responseList);
-
-        ImageAddresses imageAddresses = new ImageAddresses();
-        imageAddresses.setUrlList(imageList);
-
-        return imageAddresses;
+        return responseList;
     }
 
     public List<String> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
@@ -62,6 +85,13 @@ public class TwitterResource {
         }
 
         return imageUris;
+    }
+
+    public ImageAddresses createImageAddressJSON(List<String> urlList) {
+        ImageAddresses imageAddresses = new ImageAddresses();
+        imageAddresses.setUrlList(urlList);
+
+        return imageAddresses;
     }
 
 }

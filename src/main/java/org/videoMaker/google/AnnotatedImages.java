@@ -1,10 +1,12 @@
 package org.videoMaker.google;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.cloud.vision.v1.EntityAnnotation;
-
 import java.util.List;
 
+/*
+    Representation of returned labels for individual images sent to the
+    Google CV endpoint
+ */
 public class AnnotatedImages {
 
     @JsonProperty("description")
