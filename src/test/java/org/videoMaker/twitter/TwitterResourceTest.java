@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TwitterResourceTest {
 
     private final String PATH =
-            "";
+            "/twitter/";
 
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()

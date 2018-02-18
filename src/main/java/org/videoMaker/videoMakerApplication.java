@@ -1,12 +1,18 @@
 package org.videoMaker;
 
 import io.dropwizard.Application;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import io.dropwizard.views.ViewBundle;
+import org.glassfish.jersey.client.JerseyClient;
+import org.videoMaker.client.ViewCreator;
 import org.videoMaker.ffmpeg.VideoCreatorResource;
 import org.videoMaker.google.GoogleCVResource;
 import org.videoMaker.twitter.TwitterResource;
+
+import javax.ws.rs.client.Client;
 
 public class videoMakerApplication extends Application<videoMakerConfiguration> {
 
@@ -21,13 +27,12 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
 
     @Override
     public void initialize(final Bootstrap<videoMakerConfiguration> bootstrap) {
-        // TODO: application initialization
+        bootstrap.addBundle(new ViewBundle<>());
     }
 
     @Override
     public void run(final videoMakerConfiguration configuration,
                     final Environment environment) {
-
         environment.jersey().register(
                 new TwitterResource()
         );
@@ -39,6 +44,8 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
                 new VideoCreatorResource()
         );
 
+        final Client client = new JerseyClientBuilder(environment).build("DEMOCLIENT");
+        environment.jersey().register(new ViewCreator(client));
     }
 
 }
