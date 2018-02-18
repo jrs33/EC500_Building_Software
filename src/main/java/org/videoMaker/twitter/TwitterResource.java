@@ -15,6 +15,8 @@ import java.util.List;
 @Path("/twitter")
 public class TwitterResource {
 
+    public TwitterResource() {}
+
     @GET
     @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
