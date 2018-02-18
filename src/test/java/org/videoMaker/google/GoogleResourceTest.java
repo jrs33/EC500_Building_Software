@@ -30,7 +30,12 @@ public class GoogleResourceTest {
 
     @Test
     public void googleReturnDataAsExpected() {
-        Response response = googleResourceTest.client().target("/google").request().post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+        Response response =
+                googleResourceTest
+                        .client()
+                        .target("/google")
+                        .request()
+                        .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
 
         System.out.println(response);
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
@@ -38,14 +43,24 @@ public class GoogleResourceTest {
 
     @Test
     public void googleHandlesEmptyData() {
-        Response response = googleResourceTest.client().target("/google").request().post(Entity.entity(emptyJSON, MediaType.APPLICATION_JSON_TYPE));
+        Response response =
+                googleResourceTest
+                        .client()
+                        .target("/google")
+                        .request()
+                        .post(Entity.entity(emptyJSON, MediaType.APPLICATION_JSON_TYPE));
 
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
     }
 
     @Test
     public void googleHandlesFalseLinks() {
-        Response response = googleResourceTest.client().target("/google").request().post(Entity.entity(brokenJSON, MediaType.APPLICATION_JSON_TYPE));
+        Response response =
+                googleResourceTest
+                        .client()
+                        .target("/google")
+                        .request()
+                        .post(Entity.entity(brokenJSON, MediaType.APPLICATION_JSON_TYPE));
 
         assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
     }
@@ -53,7 +68,13 @@ public class GoogleResourceTest {
     @Test
     public void testGoogleEndpointTime() {
         long startTime = System.currentTimeMillis();
-        googleResourceTest.client().target("/google").request().post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+
+        googleResourceTest
+                .client()
+                .target("/google")
+                .request()
+                .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+
         long endTime = System.currentTimeMillis();
 
         long duration = endTime - startTime;
@@ -67,7 +88,13 @@ public class GoogleResourceTest {
         System.gc();
 
         long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
-        googleResourceTest.client().target("/google").request().post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+
+        googleResourceTest
+                .client()
+                .target("/google")
+                .request()
+                .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 
         System.out.println("Memory Used By Google Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
