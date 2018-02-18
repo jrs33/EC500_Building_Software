@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TwitterResourceTest {
 
     private final String PATH =
-            "/twitter/zPLGXxokHUrywr4EyicZLo3RI/7EjRfzkrke8CNmXpAhMDdB1JnRoIqLxpcnshPr7ju37SWAwv1H/951789582-Tv3Rj5GfnH9v2ganaMYRFJn8tmzDcmrTBj5NZB63/NJvIItM8ZrKgcluyKVczNzPt0hUVnHcQOFtHqLgynBkZA";
+            "";
 
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()
