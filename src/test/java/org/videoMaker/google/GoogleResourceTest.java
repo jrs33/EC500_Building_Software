@@ -79,7 +79,7 @@ public class GoogleResourceTest {
 
         long duration = endTime - startTime;
 
-        System.out.println("Google CV Endpoint Time(ms): " + duration);
+        System.out.println("|   Google CV Endpoint Time(ms): " + duration);
     }
 
     @Test
@@ -97,7 +97,7 @@ public class GoogleResourceTest {
 
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 
-        System.out.println("Memory Used By Google Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
+        System.out.println("|   Memory Used By Google Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
     }
 
 }

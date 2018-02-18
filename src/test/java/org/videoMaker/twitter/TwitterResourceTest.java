@@ -6,6 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,19 +25,9 @@ public class TwitterResourceTest {
 
     @Test
     public void twitterReturnsDataAsExpected() throws IOException {
-        String response = resourceTestRule.client().target(PATH).request().get(String.class);
+        Response response = resourceTestRule.client().target(PATH).request().get();
 
-        String missingJson = "{\"code\": 404, \"message\": \"HTTP 404 Not Found\"}";
-        String emptyJson = "{}";
-
-        ObjectReader objectReader = resourceTestRule.getObjectMapper().reader(ImageAddresses.class);
-
-        // Serialize an object based on JSON
-        ImageAddresses actual = objectReader.readValue(response);
-        ImageAddresses empty = objectReader.readValue(emptyJson);
-
-        assertThat(actual).isNotEqualTo(missingJson);
-        assertThat(actual.getUrlList()).isNotEqualTo(empty.getUrlList());
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.OK);
     }
 
     @Test
@@ -46,13 +37,13 @@ public class TwitterResourceTest {
         final String falseAccessToken = "c";
         final String falseAccessSecret = "d";
 
-        String expected = resourceTestRule.client().target(PATH).request().get(String.class);
+        String expected = "{\"urlList\":[]}";
 
         String actual = resourceTestRule.client().target(
                 "/twitter/" + falseConsumerKey + "/" + falseConsumerSecret + "/" + falseAccessToken + "/" + falseAccessSecret
         ).request().get(String.class);
 
-        assertThat(actual).isNotEqualTo(expected);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -63,7 +54,7 @@ public class TwitterResourceTest {
 
         long duration = endTime - startTime;
 
-        System.out.println("Twitter Endpoint Time (ms): " + duration);
+        System.out.println("|   Twitter Endpoint Time (ms): " + duration);
     }
 
     @Test
@@ -75,7 +66,7 @@ public class TwitterResourceTest {
         resourceTestRule.client().target(PATH).request().get(String.class);
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 
-        System.out.println("Memory Used By Twitter Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
+        System.out.println("|   Memory Used By Twitter Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
     }
 
 }

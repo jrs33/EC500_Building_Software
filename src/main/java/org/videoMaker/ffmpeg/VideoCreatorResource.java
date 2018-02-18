@@ -6,7 +6,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import java.awt.*;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
@@ -23,13 +22,7 @@ public class VideoCreatorResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public void fileSaver(@QueryParam("outputPath") String imageOutputPath,
                             @DefaultValue("jpg") @QueryParam("fileExtension") String fileExtension,
-                            ImageAddresses imageAddresses) throws Exception {
-        File file = new File(imageOutputPath);
-
-        if (!file.isDirectory()) {
-            throw new Exception("BAD OUTPUT PATH");
-        }
-
+                            ImageAddresses imageAddresses) {
         saveImagesToLocalFile(
                 imageAddresses.getUrlList(),
                 fileExtension,

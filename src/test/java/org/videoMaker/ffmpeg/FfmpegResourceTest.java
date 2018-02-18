@@ -38,37 +38,118 @@ public class FfmpegResourceTest {
                         .request()
                         .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
 
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
+    }
+
+    @Test
+    public void testSavingEmptyJson() {
         Response emptyResponse =
                 resource.client()
                         .target("/ffmpeg/saveImages?outputPath=" + outputPath)
                         .request()
                         .post(Entity.entity(emptyJSON, MediaType.APPLICATION_JSON_TYPE));
 
+        assertThat(emptyResponse.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
+    }
+
+    @Test
+    public void testSavingBadJson() {
         Response brokenResponse =
                 resource.client()
                         .target("/ffmpeg/saveImages?outputPath=" + outputPath)
                         .request()
                         .post(Entity.entity(brokenJSON, MediaType.APPLICATION_JSON_TYPE));
 
-        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
-        assertThat(emptyResponse.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
         assertThat(brokenResponse.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
     }
 
     @Test
     public void testSavingImagesBadPath() {
-        try {
-            Response response =
-                    resource.client()
-                            .target("/ffmpeg/saveImages?outputPath=" + brokenOutputPath)
-                            .request()
-                            .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
-            fail("SHOULD THROW EXCEPTION WITH BAD PATH");
-        } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("BAD OUTPUT PATH");
-        }
+        Response response =
+                resource.client()
+                        .target("/ffmpeg/saveImages?outputPath=" + brokenOutputPath)
+                        .request()
+                        .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
     }
 
+    @Test
+    public void testVideoCreator() {
+        Response response =
+                resource.client()
+                        .target("/ffmpeg/makeVideo?outputPath=" + outputPath + "&videoPath=" + outputPath)
+                        .request()
+                        .post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
 
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
+    }
+
+    @Test
+    public void testVideoCreatorBadPaths() {
+        Response response =
+                resource.client()
+                        .target("/ffmpeg/makeVideo?outputPath=" + brokenOutputPath + "&videoPath=" + brokenOutputPath)
+                        .request()
+                        .post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
+
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NO_CONTENT);
+    }
+
+    @Test
+    public void testMemoryUsedSavingImages() {
+        Runtime runtime = Runtime.getRuntime();
+        System.gc();
+
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        resource.client()
+                .target("/ffmpeg/saveImages?outputPath=" + outputPath)
+                .request()
+                .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+
+        System.out.println("|   Memory Used By Image Saving (bytes): " + (usedMemoryAfter - usedMemoryBefore));
+    }
+
+    @Test
+    public void testMemoryUsedMakingVideo() {
+        Runtime runtime = Runtime.getRuntime();
+        System.gc();
+
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        resource.client()
+                .target("/ffmpeg/makeVideo?outputPath=" + outputPath + "&videoPath=" + outputPath)
+                .request()
+                .post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+
+        System.out.println("|   Memory Used By Video Creation (bytes): " + (usedMemoryAfter - usedMemoryBefore));
+    }
+
+    @Test
+    public void testTimeToSaveImages() {
+        long startTime = System.currentTimeMillis();
+        resource.client()
+                .target("/ffmpeg/saveImages?outputPath=" + outputPath)
+                .request()
+                .post(Entity.entity(goodJSON, MediaType.APPLICATION_JSON_TYPE));
+        long endTime = System.currentTimeMillis();
+
+        long duration = endTime - startTime;
+        System.out.println("|   Saving Images Time (ms): " + duration);
+    }
+
+    @Test
+    public void testTimeToMakeVideo() {
+        long startTime = System.currentTimeMillis();
+        resource.client()
+                .target("/ffmpeg/makeVideo?outputPath=" + outputPath + "&videoPath=" + outputPath)
+                .request()
+                .post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
+        long endTime = System.currentTimeMillis();
+
+        long duration = endTime - startTime;
+        System.out.println("|   Making Video Time (ms): " + duration);
+    }
 
 }
