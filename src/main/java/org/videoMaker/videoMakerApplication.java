@@ -6,7 +6,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import io.dropwizard.views.ViewBundle;
-import org.glassfish.jersey.client.JerseyClient;
 import org.videoMaker.client.ViewCreator;
 import org.videoMaker.ffmpeg.VideoCreatorResource;
 import org.videoMaker.google.GoogleCVResource;
@@ -44,7 +43,7 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
                 new VideoCreatorResource()
         );
 
-        final Client client = new JerseyClientBuilder(environment).build("DEMOCLIENT");
+        final Client client = new JerseyClientBuilder(environment).build("DEMO_CLIENT");
         environment.jersey().register(new ViewCreator(client));
     }
 

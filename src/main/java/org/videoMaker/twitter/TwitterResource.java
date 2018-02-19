@@ -1,6 +1,6 @@
 package org.videoMaker.twitter;
 
-import org.videoMaker.templates.ApplicationView;
+import org.videoMaker.client.ApplicationView;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -44,34 +44,6 @@ public class TwitterResource {
         }
 
         return imageAddresses;
-    }
-
-    @GET
-    @Path("/view/{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public ApplicationView viewgetTweets(@PathParam("consumerKey") String consumerKey,
-                                    @PathParam("consumerKeySecret") String consumerKeySecret,
-                                    @PathParam("accessToken") String accessToken,
-                                    @PathParam("accessTokenSecret") String accessTokenSecret) {
-        ImageAddresses imageAddresses = new ImageAddresses();
-
-        try {
-            ConfigurationBuilder cb =
-                    buildConfigurationObject(
-                            consumerKey,
-                            consumerKeySecret,
-                            accessToken,
-                            accessTokenSecret
-                    );
-            Twitter twitter = buildTwitterAPIClient(cb);
-            ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
-            List<String> imageList = getImagesFromTweets(responseList);
-
-            imageAddresses = createImageAddressJSON(imageList);
-        } catch (TwitterException te){
-        }
-
-        return new ApplicationView(imageAddresses, null);
     }
 
     public ConfigurationBuilder buildConfigurationObject(String consumerKey,

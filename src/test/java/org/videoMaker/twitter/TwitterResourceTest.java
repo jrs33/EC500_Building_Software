@@ -12,8 +12,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TwitterResourceTest {
 
-    private final String PATH =
-            "/twitter/";
+    // TODO: Add these to config.yaml
+    String consumerKey = "";
+    String consumerSecret = "";
+    String accessKey = "";
+    String accessSecret = "";
+    private final String PATH = "/twitter/" +
+                    consumerKey + "/" +
+                    consumerSecret + "/" +
+                    accessKey + "/" +
+                    accessSecret;
 
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()

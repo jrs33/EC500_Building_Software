@@ -1,7 +1,7 @@
 package org.videoMaker.google;
 
 import com.google.cloud.vision.v1.*;
-import org.videoMaker.templates.ApplicationView;
+import org.videoMaker.client.ApplicationView;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.Consumes;
@@ -21,6 +21,7 @@ public class GoogleCVResource {
     */
     public GoogleCVResource() {}
 
+    // TODO: Redo to avoid malformed JSON
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
@@ -46,34 +47,6 @@ public class GoogleCVResource {
         }
 
         return annotatedImagesList;
-    }
-
-    @POST
-    @Path("/view")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public ApplicationView viewTagRemoteAddressedImageList(ImageAddresses imageAddresses) {
-        List<AnnotatedImages> annotatedImagesList = new ArrayList<>();
-        List<String> imageDescriptions = new ArrayList<>();
-
-        for(String url : imageAddresses.getUrlList()) {
-            ImageSource imageSource = ImageSource.newBuilder().setImageUri(url).build();
-            Image image = Image.newBuilder().setSource(imageSource).build();
-            Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
-            List<AnnotateImageRequest> requests = new ArrayList<>();
-
-            requests.add(
-                    buildImageRequestObject(feature,image)
-            );
-
-            imageDescriptions = googleCloudClientDescriptionFetcher(requests);
-
-            annotatedImagesList.add(
-                    createDescribedAnnotatedImageObject(imageDescriptions)
-            );
-        }
-
-        return new ApplicationView(imageAddresses, annotatedImagesList);
     }
 
     public List<String> googleCloudClientDescriptionFetcher(List<AnnotateImageRequest> requests) {
