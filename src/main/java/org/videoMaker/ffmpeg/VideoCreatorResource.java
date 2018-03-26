@@ -15,6 +15,8 @@ import java.util.List;
 @Path("/ffmpeg")
 public class VideoCreatorResource {
 
+    public VideoCreatorResource() {}
+
     @Path("/saveImages")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

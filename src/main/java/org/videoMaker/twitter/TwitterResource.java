@@ -1,5 +1,6 @@
 package org.videoMaker.twitter;
 
+import org.videoMaker.client.ApplicationView;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -15,6 +16,8 @@ import java.util.List;
 @Path("/twitter")
 public class TwitterResource {
 
+    public TwitterResource() {}
+
     @GET
     @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -22,18 +25,23 @@ public class TwitterResource {
                                     @PathParam("consumerKeySecret") String consumerKeySecret,
                                     @PathParam("accessToken") String accessToken,
                                     @PathParam("accessTokenSecret") String accessTokenSecret) {
-        ConfigurationBuilder cb =
-                buildConfigurationObject(
-                        consumerKey,
-                        consumerKeySecret,
-                        accessToken,
-                        accessTokenSecret
-                );
-        Twitter twitter = buildTwitterAPIClient(cb);
-        ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
-        List<String> imageList = getImagesFromTweets(responseList);
+        ImageAddresses imageAddresses = new ImageAddresses();
 
-        ImageAddresses imageAddresses = createImageAddressJSON(imageList);
+        try {
+            ConfigurationBuilder cb =
+                    buildConfigurationObject(
+                            consumerKey,
+                            consumerKeySecret,
+                            accessToken,
+                            accessTokenSecret
+                    );
+            Twitter twitter = buildTwitterAPIClient(cb);
+            ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
+            List<String> imageList = getImagesFromTweets(responseList);
+
+            imageAddresses = createImageAddressJSON(imageList);
+        } catch (TwitterException te){
+        }
 
         return imageAddresses;
     }
@@ -41,7 +49,7 @@ public class TwitterResource {
     public ConfigurationBuilder buildConfigurationObject(String consumerKey,
                                                          String consumerKeySecret,
                                                          String accessToken,
-                                                         String accessTokenSecret) {
+                                                         String accessTokenSecret) throws TwitterException {
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
                 .setOAuthConsumerKey(consumerKey)
@@ -74,12 +82,14 @@ public class TwitterResource {
     public List<String> getImagesFromTweets(ResponseList<Status> tweetJSONObject) {
         List<String> imageUris = new ArrayList<>();
 
-        for(Status tweet : tweetJSONObject) {
-            MediaEntity[] images = tweet.getMediaEntities();
+        if(tweetJSONObject != null) {
+            for (Status tweet : tweetJSONObject) {
+                MediaEntity[] images = tweet.getMediaEntities();
 
-            for(MediaEntity mediaEntity : images) {
-                if(!mediaEntity.getMediaURL().equals("")) {
-                    imageUris.add(mediaEntity.getMediaURL());
+                for (MediaEntity mediaEntity : images) {
+                    if (!mediaEntity.getMediaURL().equals("")) {
+                        imageUris.add(mediaEntity.getMediaURL());
+                    }
                 }
             }
         }

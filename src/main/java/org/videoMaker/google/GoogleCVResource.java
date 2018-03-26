@@ -1,6 +1,7 @@
 package org.videoMaker.google;
 
 import com.google.cloud.vision.v1.*;
+import org.videoMaker.client.ApplicationView;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.Consumes;
@@ -18,6 +19,9 @@ public class GoogleCVResource {
     /*
         Need to pass the API key for your service in the header of the request
     */
+    public GoogleCVResource() {}
+
+    // TODO: Redo to avoid malformed JSON
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

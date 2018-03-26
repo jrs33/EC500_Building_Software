@@ -2,3 +2,12 @@ logging:
   level: INFO
   loggers:
     org.videoMaker: DEBUG
+
+mongo:
+  seeds:
+  - host: localhost
+    port: 27017
+  database: example
+  credentials:
+    userName:
+    password: 
