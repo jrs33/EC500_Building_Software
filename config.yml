@@ -10,4 +10,4 @@ mongo:
   database: example
   credentials:
     userName:
-    password: 
+    password:
