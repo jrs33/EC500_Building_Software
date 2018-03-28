@@ -9,10 +9,12 @@ mongo:
     port: 27017
   database: videoMaker
   credentials:
-    userName: mongoAdmin
-    password: lightfly33
+#    userName:
+#    password:
 
 #consumerKey:
 #consumerKeySecret:
 #accessKey:
 #accessKeySecret:
+
+

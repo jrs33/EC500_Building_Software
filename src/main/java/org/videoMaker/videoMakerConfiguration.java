@@ -31,7 +31,7 @@ public class videoMakerConfiguration extends Configuration {
     @JsonProperty
     private String accessKeySecret;
 
-    public String getAccessKeySecret() {
+    protected String getAccessKeySecret() {
         return accessKeySecret;
     }
 

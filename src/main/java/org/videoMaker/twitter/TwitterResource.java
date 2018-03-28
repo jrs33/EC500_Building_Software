@@ -16,11 +16,11 @@ import java.util.List;
 
 @Path("/twitter")
 public class TwitterResource {
-    String consumerKey;
-    String consumerKeySecret;
-    String accessKey;
-    String accessKeySecret;
-    DB mongoDatabase;
+    private String consumerKey;
+    private String consumerKeySecret;
+    private String accessKey;
+    private String accessKeySecret;
+    private DB mongoDatabase;
 
     public TwitterResource(
             String consumerKey,
@@ -37,7 +37,6 @@ public class TwitterResource {
     }
 
     @GET
-    @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
     public ImageAddresses getTweets() {
         ImageAddresses imageAddresses = new ImageAddresses();
@@ -56,8 +55,8 @@ public class TwitterResource {
             List<String> imageList = getImagesFromTweets(responseList);
 
             imageAddresses = createImageAddressJSON(imageList);
-            System.out.println(mongoDatabase.getCollectionNames());
-        } catch (TwitterException te){
+            //System.out.println(mongoDatabase.getCollectionNames());
+        } catch (TwitterException te) {
             System.out.println(te.getErrorMessage());
         }
 
