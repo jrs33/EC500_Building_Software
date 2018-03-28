@@ -8,9 +8,37 @@ import javax.validation.constraints.*;
 
 public class videoMakerConfiguration extends Configuration {
     @JsonProperty
-    protected MongoConfiguration mongo;
+    private String consumerKey;
 
-    public MongoConfiguration getMongo() {
+    protected String getConsumerKey() {
+        return consumerKey;
+    }
+
+    @JsonProperty
+    private String consumerKeySecret;
+
+    protected String getConsumerKeySecret() {
+        return consumerKeySecret;
+    }
+
+    @JsonProperty
+    private String accessKey;
+
+    protected String getAccessKey() {
+        return accessKey;
+    }
+
+    @JsonProperty
+    private String accessKeySecret;
+
+    public String getAccessKeySecret() {
+        return accessKeySecret;
+    }
+
+    @JsonProperty
+    private MongoConfiguration mongo;
+
+    protected MongoConfiguration getMongo() {
         return mongo;
     }
 }

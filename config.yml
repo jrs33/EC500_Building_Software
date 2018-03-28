@@ -7,7 +7,12 @@ mongo:
   seeds:
   - host: localhost
     port: 27017
-  database: example
+  database: videoMaker
   credentials:
-    userName:
-    password:
+    userName: mongoAdmin
+    password: lightfly33
+
+#consumerKey:
+#consumerKeySecret:
+#accessKey:
+#accessKeySecret:

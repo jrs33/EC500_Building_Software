@@ -1,6 +1,7 @@
 package org.videoMaker.twitter;
 
 import com.fasterxml.jackson.databind.ObjectReader;
+import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,18 +12,7 @@ import java.io.IOException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TwitterResourceTest {
-
-    // TODO: Add these to config.yaml
-    String consumerKey = "";
-    String consumerSecret = "";
-    String accessKey = "";
-    String accessSecret = "";
-    private final String PATH = "/twitter/" +
-                    consumerKey + "/" +
-                    consumerSecret + "/" +
-                    accessKey + "/" +
-                    accessSecret;
-
+    /*
     @Rule
     public final ResourceTestRule resourceTestRule = ResourceTestRule.builder()
             .addResource(new TwitterResource())
@@ -75,6 +65,6 @@ public class TwitterResourceTest {
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
 
         System.out.println("|   Memory Used By Twitter Call (bytes): " + (usedMemoryAfter - usedMemoryBefore));
-    }
+    }*/
 
 }

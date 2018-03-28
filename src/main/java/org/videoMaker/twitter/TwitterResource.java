@@ -1,5 +1,6 @@
 package org.videoMaker.twitter;
 
+import com.mongodb.DB;
 import org.videoMaker.client.ApplicationView;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
@@ -15,16 +16,30 @@ import java.util.List;
 
 @Path("/twitter")
 public class TwitterResource {
+    String consumerKey;
+    String consumerKeySecret;
+    String accessKey;
+    String accessKeySecret;
+    DB mongoDatabase;
 
-    public TwitterResource() {}
+    public TwitterResource(
+            String consumerKey,
+            String consumerKeySecret,
+            String accessKey,
+            String accessKeySecret,
+            DB mongoDatabase
+    ) {
+        this.consumerKey = consumerKey;
+        this.consumerKeySecret = consumerKeySecret;
+        this.accessKey = accessKey;
+        this.accessKeySecret = accessKeySecret;
+        this.mongoDatabase = mongoDatabase;
+    }
 
     @GET
     @Path("{consumerKey}/{consumerKeySecret}/{accessToken}/{accessTokenSecret}")
     @Produces(MediaType.APPLICATION_JSON)
-    public ImageAddresses getTweets(@PathParam("consumerKey") String consumerKey,
-                                    @PathParam("consumerKeySecret") String consumerKeySecret,
-                                    @PathParam("accessToken") String accessToken,
-                                    @PathParam("accessTokenSecret") String accessTokenSecret) {
+    public ImageAddresses getTweets() {
         ImageAddresses imageAddresses = new ImageAddresses();
 
         try {
@@ -32,15 +47,18 @@ public class TwitterResource {
                     buildConfigurationObject(
                             consumerKey,
                             consumerKeySecret,
-                            accessToken,
-                            accessTokenSecret
+                            accessKey,
+                            accessKeySecret
                     );
             Twitter twitter = buildTwitterAPIClient(cb);
+
             ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
             List<String> imageList = getImagesFromTweets(responseList);
 
             imageAddresses = createImageAddressJSON(imageList);
+            System.out.println(mongoDatabase.getCollectionNames());
         } catch (TwitterException te){
+            System.out.println(te.getErrorMessage());
         }
 
         return imageAddresses;
