@@ -9,12 +9,10 @@ mongo:
     port: 27017
   database: videoMaker
   credentials:
-#    userName:
-#    password:
+    userName:
+    password:
 
-#consumerKey:
-#consumerKeySecret:
-#accessKey:
-#accessKeySecret:
-
-
+consumerKey:
+consumerKeySecret:
+accessKey:
+accessKeySecret:
