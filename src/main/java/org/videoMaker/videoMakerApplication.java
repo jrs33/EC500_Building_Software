@@ -40,17 +40,19 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
     @Override
     public void run(final videoMakerConfiguration configuration,
                     final Environment environment) {
+        DB db = mongoBundle.getDB();
+
         environment.jersey().register(
                 new TwitterResource(
                         configuration.getConsumerKey(),
                         configuration.getConsumerKeySecret(),
                         configuration.getAccessKey(),
                         configuration.getAccessKeySecret(),
-                        mongoBundle.getDB()
+                        db
                 )
         );
         environment.jersey().register(
-                new GoogleCVResource()
+                new GoogleCVResource(db)
         );
 
         environment.jersey().register(

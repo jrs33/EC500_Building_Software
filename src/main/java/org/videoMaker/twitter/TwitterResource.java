@@ -56,16 +56,16 @@ public class TwitterResource implements LoggedResource {
                     );
             Twitter twitter = buildTwitterAPIClient(cb);
 
+
             ResponseList<Status> responseList = retrieveTimelineTweets(twitter);
             List<String> imageList = getImagesFromTweets(responseList);
 
             imageAddresses = createImageAddressJSON(imageList);
 
-            String timezone = twitter.getAccountSettings().getTimeZone().getName();
             DBCollection collection = getTwitterCollection();
             log(
                     collection,
-                    buildObject(twitter.getScreenName(), imageList.size(), timezone)
+                    buildObject(imageList.size())
             );
         } catch (TwitterException te) {
             System.out.println(te.getErrorMessage());
@@ -83,13 +83,11 @@ public class TwitterResource implements LoggedResource {
         }
     }
 
-    private BasicDBObject buildObject(String name, int numberImages, String timezone) {
+    private BasicDBObject buildObject(int numberImages) {
         String date = DateTime.now().toString();
         BasicDBObject dbObject =
-                new BasicDBObject("date", date)
-                        .append("twitter_id",name)
-                        .append("numImages",numberImages)
-                        .append("timezone", timezone);
+                new BasicDBObject("_id", date)
+                        .append("numImages",numberImages);
 
         return dbObject;
     }

@@ -1,7 +1,13 @@
 package org.videoMaker.google;
 
 import com.google.cloud.vision.v1.*;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import org.joda.time.DateTime;
 import org.videoMaker.client.ApplicationView;
+import org.videoMaker.mongo.LoggedResource;
+import org.videoMaker.mongo.MongoLogger;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.Consumes;
@@ -14,18 +20,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Path("/google")
-public class GoogleCVResource {
-
+public class GoogleCVResource implements LoggedResource {
     /*
         Need to pass the API key for your service in the header of the request
     */
-    public GoogleCVResource() {}
+    private static final String GOOGLE_COLLECTION = "google";
+
+    private DB mongoDatabase;
+
+    public GoogleCVResource(DB mongoDatabase) {
+        this.mongoDatabase = mongoDatabase;
+    }
 
     // TODO: Redo to avoid malformed JSON
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public List<AnnotatedImages> tagRemoteAddressedImageList(ImageAddresses imageAddresses) {
+    public AnnotatedImagesSeries tagRemoteAddressedImageList(ImageAddresses imageAddresses) {
         List<AnnotatedImages> annotatedImagesList = new ArrayList<>();
         List<String> imageDescriptions = new ArrayList<>();
 
@@ -46,7 +57,30 @@ public class GoogleCVResource {
             );
         }
 
-        return annotatedImagesList;
+        DBCollection collection = getGoogleCollection();
+        log(collection, buildObject(imageDescriptions));
+
+        AnnotatedImagesSeries result = new AnnotatedImagesSeries();
+        result.setAnnotatedImagesList(annotatedImagesList);
+        return result;
+    }
+
+    @Override
+    public void log(DBCollection collection, BasicDBObject object) {
+        try {
+            MongoLogger.logInMongo(collection, object);
+        } catch (Exception e) {
+            System.out.println("ERROR: Unable to insert in mongo " + GOOGLE_COLLECTION);
+        }
+    }
+
+    private BasicDBObject buildObject(List<String> imageDescriptors) {
+        String date = DateTime.now().toString();
+        BasicDBObject dbObject =
+                new BasicDBObject("_id", date)
+                        .append("descriptors", imageDescriptors);
+
+        return dbObject;
     }
 
     public List<String> googleCloudClientDescriptionFetcher(List<AnnotateImageRequest> requests) {
@@ -95,4 +129,7 @@ public class GoogleCVResource {
         return request;
     }
 
+    private DBCollection getGoogleCollection() {
+        return mongoDatabase.getCollection(GOOGLE_COLLECTION);
+    }
 }
