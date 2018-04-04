@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.fail;
 
 public class FfmpegResourceTest {
 
-    private final String goodJSON =
+    /*private final String goodJSON =
             "{\"urlList\" : [\"http://pbs.twimg.com/ext_tw_video_thumb/965075590528122881/pu/img/8QaKikfwIfATp42n.jpg\"]}";
     private final String emptyJSON = "{\"urlList\" : []}";
     private final String brokenJSON =
@@ -150,6 +150,6 @@ public class FfmpegResourceTest {
 
         long duration = endTime - startTime;
         System.out.println("|   Making Video Time (ms): " + duration);
-    }
+    }*/
 
 }

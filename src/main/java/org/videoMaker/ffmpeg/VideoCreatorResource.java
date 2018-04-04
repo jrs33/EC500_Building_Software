@@ -1,5 +1,11 @@
 package org.videoMaker.ffmpeg;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import org.joda.time.DateTime;
+import org.videoMaker.mongo.LoggedResource;
+import org.videoMaker.mongo.MongoLogger;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.*;
@@ -13,9 +19,16 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Path("/ffmpeg")
-public class VideoCreatorResource {
+public class VideoCreatorResource implements LoggedResource {
+    private static final String FFMPEG_COLLECTION = "ffmpeg";
 
-    public VideoCreatorResource() {}
+    private DB mongoDatabase;
+
+    public VideoCreatorResource(
+            DB mongoDatabase
+    ) {
+        this.mongoDatabase = mongoDatabase;
+    }
 
     @Path("/saveImages")
     @POST
@@ -28,6 +41,10 @@ public class VideoCreatorResource {
                 fileExtension,
                 imageOutputPath
         );
+
+        DBCollection collection = getffmpegCollection();
+        BasicDBObject object = buildObject(imageAddresses.getUrlList(), fileExtension);
+        log(collection, object);
     }
 
     @Path("/makeVideo")
@@ -37,6 +54,25 @@ public class VideoCreatorResource {
                                @QueryParam("videoPath") String videoPath,
                                @DefaultValue("jpg") @QueryParam("fileExtension") String fileExtension) {
         createAndSaveFFMPEGVideo(imagePath, videoPath, fileExtension);
+    }
+
+    @Override
+    public void log(DBCollection collection, BasicDBObject object) {
+        try {
+            MongoLogger.logInMongo(collection, object);
+        } catch (Exception e) {
+            System.out.println("ERROR: unable to insert in mongo " + FFMPEG_COLLECTION);
+        }
+    }
+
+    public BasicDBObject buildObject(List<String> imageAddresses, String format) {
+        String date = DateTime.now().toString();
+        BasicDBObject dbObject =
+                new BasicDBObject("_id", date)
+                        .append("imageUrls", imageAddresses)
+                        .append("extension", format);
+
+        return dbObject;
     }
 
     public void saveImagesToLocalFile(List<String> imageAddresses,
@@ -61,11 +97,13 @@ public class VideoCreatorResource {
         try {
             String ffmpegCommand =
                     "ffmpeg -r 1 -i " + imagePath + "image%d." + fileExtension + " -s 320x240 -aspect 4:3 "+ videoPath +"output.mp4";
-            System.out.println(ffmpegCommand);
             Runtime.getRuntime().exec(ffmpegCommand);
         } catch (Exception e) {
             System.out.println("One of the paths was incorrect or ffmpeg cant generate video from listed images");
         }
     }
 
+    private DBCollection getffmpegCollection() {
+        return mongoDatabase.getCollection(FFMPEG_COLLECTION);
+    }
 }

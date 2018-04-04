@@ -56,7 +56,7 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
         );
 
         environment.jersey().register(
-                new VideoCreatorResource()
+                new VideoCreatorResource(db)
         );
 
         final Client client = new JerseyClientBuilder(environment).build("DEMO_CLIENT");

@@ -32,7 +32,6 @@ public class GoogleCVResource implements LoggedResource {
         this.mongoDatabase = mongoDatabase;
     }
 
-    // TODO: Redo to avoid malformed JSON
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
