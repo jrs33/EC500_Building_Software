@@ -3,6 +3,7 @@ package org.videoMaker.ffmpeg;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import org.joda.time.DateTime;
 import org.videoMaker.mongo.LoggedResource;
 import org.videoMaker.mongo.MongoLogger;
@@ -70,6 +71,12 @@ public class VideoCreatorResource implements LoggedResource {
             System.out.println("ERROR: unable to log data properly");
             System.out.println(e.getMessage());
         }
+    }
+
+    @Path("/numVideos")
+    @GET
+    public long getNumberVideos() {
+        return getNumVideosCreated();
     }
 
     @Override
@@ -140,5 +147,12 @@ public class VideoCreatorResource implements LoggedResource {
 
     private DBCollection getffmpegCollection() {
         return mongoDatabase.getCollection(FFMPEG_COLLECTION);
+    }
+
+    private long getNumVideosCreated() {
+        DBCollection ffmpeg = getffmpegCollection();
+        DBObject dbObject = new BasicDBObject();
+        dbObject.put("type", "video");
+        return ffmpeg.getCount(dbObject);
     }
 }

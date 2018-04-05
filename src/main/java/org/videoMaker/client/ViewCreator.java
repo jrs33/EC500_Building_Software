@@ -1,7 +1,5 @@
 package org.videoMaker.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.glassfish.jersey.client.ClientResponse;
 import org.videoMaker.google.AnnotatedImages;
 import org.videoMaker.twitter.ImageAddresses;
 
