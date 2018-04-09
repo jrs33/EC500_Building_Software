@@ -1,0 +1,7 @@
+1) Change the /Users/joshsurette/ prefix to your own area you are storing videomaker
+2) Enter env EDITOR=nano crontab -e and add the following lines below into the file to register the jobs
+3) Inspect your mongo at 11am, 6pm and 1am to see the following autogenerate api hits to be sure the api behaves as expected
+
+0       11      *       *       *       /Users/joshsurette/videoMaker/bash/simulated_run.sh
+0       18      *       *       *       /Users/joshsurette/videoMaker/bash/simulated_run.sh
+0       1       *       *       *       /Users/joshsurette/videoMaker/bash/simulated_run.sh
