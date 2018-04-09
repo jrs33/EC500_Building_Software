@@ -57,7 +57,12 @@ public class GoogleCVResource implements LoggedResource {
         }
 
         DBCollection collection = getGoogleCollection();
-        log(collection, buildObject(imageDescriptions));
+        List<String> descriptions = new ArrayList<>();
+        for(AnnotatedImages annotatedImages : annotatedImagesList) {
+            descriptions.addAll(annotatedImages.getAnnotationDescriptions());
+        }
+
+        log(collection, buildObject(descriptions));
 
         AnnotatedImagesSeries result = new AnnotatedImagesSeries();
         result.setAnnotatedImagesList(annotatedImagesList);
