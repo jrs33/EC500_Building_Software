@@ -22,3 +22,4 @@ $(curl $url$ffmpeg$makeVideo$imagePathQueryParam$path&$videoPathQueryParam$path)
 
 rm image*
 rm *.mp4
+rm ../*.mp4
