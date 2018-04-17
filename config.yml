@@ -9,10 +9,24 @@ mongo:
     port: 27017
   database: videoMaker
   credentials:
-    userName:
-    password:
+    userName: "josh_sure"
+    password: "easyasdoremiabc123uandme"
 
-consumerKey:
-consumerKeySecret:
-accessKey:
-accessKeySecret:
+consumerKey: "yAadiPN8pOodJors6n9dZla96"
+consumerKeySecret: "ejdU0yalC8tfbfk0R00Sbau2HENquRErOl25W7Kzbi5lfDquDp"
+accessKey: "951789582-Tv3Rj5GfnH9v2ganaMYRFJn8tmzDcmrTBj5NZB63"
+accessKeySecret: "NJvIItM8ZrKgcluyKVczNzPt0hUVnHcQOFtHqLgynBkZA"
+
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: root
+  password: lightfly33
+  url: jdbc:mysql://localhost/videoMaker
+
+#    userName:
+#    password:
+
+#consumerKey:
+#consumerKeySecret:
+#accessKey:
+#accessKeySecret:

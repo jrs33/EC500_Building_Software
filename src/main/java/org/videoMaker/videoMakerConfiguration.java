@@ -3,8 +3,10 @@ package org.videoMaker;
 import com.meltmedia.dropwizard.mongo.MongoConfiguration;
 import io.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.validator.constraints.*;
-import javax.validation.constraints.*;
+import io.dropwizard.db.DataSourceFactory;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class videoMakerConfiguration extends Configuration {
     @JsonProperty
@@ -40,5 +42,19 @@ public class videoMakerConfiguration extends Configuration {
 
     protected MongoConfiguration getMongo() {
         return mongo;
+    }
+
+    @Valid
+    @NotNull
+    private DataSourceFactory database = new DataSourceFactory();
+
+    @JsonProperty("database")
+    public void setDatabaseFactory(DataSourceFactory factory) {
+        this.database = factory;
+    }
+
+    @JsonProperty("database")
+    public DataSourceFactory getDatabaseFactory() {
+        return database;
     }
 }
