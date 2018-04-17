@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.videoMaker.client.ApplicationView;
 import org.videoMaker.mongo.LoggedResource;
 import org.videoMaker.mongo.MongoLogger;
+import org.videoMaker.sql.SQLogger;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.Consumes;
@@ -27,9 +28,14 @@ public class GoogleCVResource implements LoggedResource {
     private static final String GOOGLE_COLLECTION = "google";
 
     private DB mongoDatabase;
+    private SQLogger sqLogger;
 
-    public GoogleCVResource(DB mongoDatabase) {
+    public GoogleCVResource(
+            DB mongoDatabase,
+            SQLogger sqLogger
+    ) {
         this.mongoDatabase = mongoDatabase;
+        this.sqLogger = sqLogger;
     }
 
     @POST
@@ -63,6 +69,11 @@ public class GoogleCVResource implements LoggedResource {
         }
 
         log(collection, buildObject(descriptions));
+        DateTime dateTime = DateTime.now();
+        descriptions.forEach(
+                label ->
+                        sqLogger.logGoogle(dateTime, label)
+        );
 
         AnnotatedImagesSeries result = new AnnotatedImagesSeries();
         result.setAnnotatedImagesList(annotatedImagesList);

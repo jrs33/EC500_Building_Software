@@ -6,6 +6,7 @@ import com.mongodb.DBCollection;
 import org.joda.time.DateTime;
 import org.videoMaker.mongo.LoggedResource;
 import org.videoMaker.mongo.MongoLogger;
+import org.videoMaker.sql.SQLogger;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -26,19 +27,22 @@ public class TwitterResource implements LoggedResource {
     private String accessKey;
     private String accessKeySecret;
     private DB mongoDatabase;
+    private SQLogger sqLogger;
 
     public TwitterResource(
             String consumerKey,
             String consumerKeySecret,
             String accessKey,
             String accessKeySecret,
-            DB mongoDatabase
+            DB mongoDatabase,
+            SQLogger sqLogger
     ) {
         this.consumerKey = consumerKey;
         this.consumerKeySecret = consumerKeySecret;
         this.accessKey = accessKey;
         this.accessKeySecret = accessKeySecret;
         this.mongoDatabase = mongoDatabase;
+        this.sqLogger = sqLogger;
     }
 
     @GET
@@ -62,11 +66,13 @@ public class TwitterResource implements LoggedResource {
 
             imageAddresses = createImageAddressJSON(imageList);
 
+            int numberImages = imageList.size();
             DBCollection collection = getTwitterCollection();
             log(
                     collection,
-                    buildObject(imageList.size())
+                    buildObject(numberImages)
             );
+            sqLogger.logTwitter(DateTime.now(), numberImages);
         } catch (TwitterException te) {
             System.out.println(te.getErrorMessage());
         }

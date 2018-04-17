@@ -7,6 +7,7 @@ import com.mongodb.DBObject;
 import org.joda.time.DateTime;
 import org.videoMaker.mongo.LoggedResource;
 import org.videoMaker.mongo.MongoLogger;
+import org.videoMaker.sql.SQLogger;
 import org.videoMaker.twitter.ImageAddresses;
 
 import javax.ws.rs.*;
@@ -28,11 +29,14 @@ public class VideoCreatorResource implements LoggedResource {
     private static final String FFMPEG_COLLECTION = "ffmpeg";
 
     private DB mongoDatabase;
+    private SQLogger sqLogger;
 
     public VideoCreatorResource(
-            DB mongoDatabase
+            DB mongoDatabase,
+            SQLogger sqLogger
     ) {
         this.mongoDatabase = mongoDatabase;
+        this.sqLogger = sqLogger;
     }
 
     @Path("/saveImages")
@@ -50,6 +54,12 @@ public class VideoCreatorResource implements LoggedResource {
         DBCollection collection = getffmpegCollection();
         BasicDBObject object = buildObject(imageAddresses.getUrlList(), fileExtension);
         log(collection, object);
+
+        DateTime dateTime = DateTime.now();
+        imageAddresses.getUrlList().forEach(
+                url ->
+                        sqLogger.logFfmpeg(dateTime, url)
+        );
     }
 
     @Path("/makeVideo")

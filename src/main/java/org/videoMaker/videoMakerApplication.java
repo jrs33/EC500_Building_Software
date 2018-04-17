@@ -55,15 +55,22 @@ public class videoMakerApplication extends Application<videoMakerConfiguration> 
                         configuration.getConsumerKeySecret(),
                         configuration.getAccessKey(),
                         configuration.getAccessKeySecret(),
-                        db
+                        db,
+                        sqLogger
                 )
         );
         environment.jersey().register(
-                new GoogleCVResource(db)
+                new GoogleCVResource(
+                        db,
+                        sqLogger
+                )
         );
 
         environment.jersey().register(
-                new VideoCreatorResource(db)
+                new VideoCreatorResource(
+                        db,
+                        sqLogger
+                )
         );
 
         final Client client = new JerseyClientBuilder(environment).build("DEMO_CLIENT");
